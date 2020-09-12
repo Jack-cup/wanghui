@@ -19,7 +19,7 @@ steps:
     commands:
       - npm run build
 
-  - name: rsync production
+  - name: rsync prod
     image: drillster/drone-rsync
     environment:
       RSYNC_KEY:
@@ -30,28 +30,28 @@ steps:
       source: .vuepress/dist/*
       target: /data
       secrets: [rsync_key]
+    when:
+      target:
+        - prod
+      event:
+        - promote
 
-    # when:
-    #   target:
-    #     - production
-    #   event:
-    #     - promote
-  # - name: rsync staging
-  #   image: drillster/drone-rsync
-  #   environment:
-  #     RSYNC_KEY:
-  #       from_secret: rsync_key
-  #   settings:
-  #     hosts:
-  #       - 47.94.147.222
-  #     source: .vuepress/dist/*
-  #     target: /root/doc
-  #     secrets: [ rsync_key ]
-  # when:
-  #   target:
-  #     - staging
-  #   event:
-  #     - promote
+  - name: rsync dev
+    image: drillster/drone-rsync
+    environment:
+      RSYNC_KEY:
+        from_secret: rsync_key
+    settings:
+      hosts:
+        - 140.143.1.235
+      source: .vuepress/dist/*
+      target: /data
+      secrets: [rsync_key]
+    when:
+      target:
+        - dev
+      event:
+        - promote
 
   - name: notify
     image: curlimages/curl
